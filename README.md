@@ -1,14 +1,18 @@
 # ponto
 React native app to register work hours
 
-clone
+#### install node js
+
+https://nodejs.org/en/download/
+
+#### clone
 
 ``` git clone https://github.com/brunoandradebr/ponto.git ```
 
-install dependencies
+#### install dependencies
 
 ``` npm install ```
 
-run project
+#### run project
 
 ``` expo start ```
