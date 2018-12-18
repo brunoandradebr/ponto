@@ -18,6 +18,7 @@ export default class Ponto extends Component {
         super(props)
 
         this.state = {
+            currentEvent: 'entrance',
             currentTime: new Date()
         }
 
@@ -27,7 +28,13 @@ export default class Ponto extends Component {
             })
         }, 1000)
 
-        AppStorage.save(2018, 12, 14, 9, 30, 0, 'entrance')
+    }
+
+    async componentDidMount() {
+
+        history = await AppStorage.allHistory()
+
+        console.log(history)
 
     }
 
