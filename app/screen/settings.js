@@ -2,13 +2,14 @@ import React, { Component } from 'react'
 
 import { StyleSheet, Text, View } from 'react-native';
 
+// app colors
 import Color from '../color.json'
 
-export default class Historico extends Component {
+export default class Settings extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.text}>Histórico</Text>
+                <Text style={styles.text}>Configurações</Text>
             </View>
         )
     }
@@ -17,7 +18,8 @@ export default class Historico extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    }, text: {
+    },
+    text: {
         color: Color.secondary
     }
 });

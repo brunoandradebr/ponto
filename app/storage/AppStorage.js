@@ -17,21 +17,28 @@ import { AsyncStorage } from 'react-native'
 
 export class AppStorage {
 
-    private currentHistory() {
+    /**
+     * Take app full history
+     * 
+     * @return {array}
+     */
+    static async allHistory() {
 
-        let history = AsyncStorage.getItem('history')
+        let history = await AsyncStorage.getItem('history')
 
         if (!history) {
-
+            AsyncStorage.setItem('history', JSON.stringify([]))
         }
 
-        console.log(history)
+        return await AsyncStorage.getItem('history')
 
     }
 
-    static save(year, month, day, hour, minutes, seconds, event) {
+    static async save(year, month, day, hour, minutes, seconds, event) {
 
-        this.currentHistory()
+        let allHistory = await AppStorage.allHistory()
+
+        console.log(allHistory)
 
     }
 

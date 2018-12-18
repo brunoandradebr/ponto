@@ -5,20 +5,20 @@ import { Platform } from 'react-native'
 import { createNavigationContainer, createMaterialTopTabNavigator } from 'react-navigation'
 
 // icons
-import Icon from 'react-native-vector-icons/Feather'
-import IconAwesome from 'react-native-vector-icons/FontAwesome'
+import Icon from '@expo/vector-icons/Feather'
+import IconAwesome from '@expo/vector-icons/FontAwesome'
 
 // screens
-import Historico from './screen/historico'
+import History from './screen/history'
 import Ponto from './screen/ponto'
-import Configuracoes from './screen/configuracoes'
+import Settings from './screen/settings'
 
 // app colors
 import Color from './color.json'
 
-// historico navigation definitions
-const HistoricoDefinition = {
-    screen: Historico,
+// history navigation definitions
+const HistoryDefinition = {
+    screen: History,
     navigationOptions: ({ navigation }) => ({
         title: 'Histórico',
         tabBarIcon: ({ focused, tintColor }) => <Icon name={'calendar'} size={(Platform.OS === 'ios') ? 25 : 20} color={tintColor} />
@@ -36,9 +36,9 @@ const PontoDefinition = {
     })
 }
 
-// configuracoes navigation definitions
-const ConfiguracoesDefinition = {
-    screen: Configuracoes,
+// settings navigation definitions
+const SettingsDefinition = {
+    screen: Settings,
     navigationOptions: ({ navigation }) => ({
         title: 'Configurações',
         tabBarIcon: ({ focused, tintColor }) => <Icon name={'settings'} size={(Platform.OS === 'ios') ? 25 : 20} color={tintColor} />
@@ -70,9 +70,9 @@ const tabDefinition = {
 // create tab navigation
 const tabNavigation = createMaterialTopTabNavigator(
     {
-        Historico: HistoricoDefinition,
+        History: HistoryDefinition,
         Ponto: PontoDefinition,
-        Configuracoes: ConfiguracoesDefinition
+        Settings: SettingsDefinition
     },
     tabDefinition
 )

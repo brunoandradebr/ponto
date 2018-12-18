@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 // app storage
-import { Storage } from '../storage/AppStorage'
+import { AppStorage } from '../storage/AppStorage'
 
 // moment
 import 'moment/locale/pt-br'
@@ -18,16 +18,16 @@ export default class Ponto extends Component {
         super(props)
 
         this.state = {
-            horaAtual: new Date()
+            currentTime: new Date()
         }
 
         setInterval(() => {
             this.setState({
-                horaAtual: new Date()
+                currentTime: new Date()
             })
         }, 1000)
 
-        Storage.save(2018, 12, 14, 9, 30, 0, 'entrada')
+        AppStorage.save(2018, 12, 14, 9, 30, 0, 'entrance')
 
     }
 
@@ -38,18 +38,18 @@ export default class Ponto extends Component {
                 <View style={styles.pontoContainer}>
                     <TouchableOpacity onLongPress={(e) => { }}>
                         <View style={styles.ponto}>
-                            <Text style={styles.hora}>{moment(new Date()).format('HH:mm:ss')}</Text>
-                            <Text style={styles.data}> {moment(new Date()).format('DD [de] MMM')}</Text>
-                            <Text style={[styles.saldoTempoReal, { color: Color.secondary }]}>Um horário qualquer</Text>
+                            <Text style={styles.hour}>{moment(new Date()).format('HH:mm:ss')}</Text>
+                            <Text style={styles.date}> {moment(new Date()).format('DD [de] MMM')}</Text>
+                            <Text style={[styles.liveBalance, { color: Color.secondary }]}>Um horário qualquer</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.registros}>
-                    <View style={styles.registro}><Text style={styles.entrada}>09:30</Text></View>
-                    <View style={styles.registro}><Text style={styles.entradaAlmoco}>11:30</Text></View>
-                    <View style={styles.registro}><Text style={styles.saidaAlmoco}>12:30</Text></View>
-                    <View style={styles.registro}><Text style={styles.saida}>18:30</Text></View>
+                <View style={styles.registries}>
+                    <View style={styles.registry}><Text style={styles.entrance}>09:30</Text></View>
+                    <View style={styles.registry}><Text style={styles.entranceLunch}>11:30</Text></View>
+                    <View style={styles.registry}><Text style={styles.leaveLunch}>12:30</Text></View>
+                    <View style={styles.registry}><Text style={styles.leave}>18:30</Text></View>
                 </View>
 
             </View>
@@ -77,22 +77,21 @@ const styles = StyleSheet.create({
         borderRadius: 150,
         borderColor: '#90ee90',
     },
-    hora: {
+    hour: {
         fontSize: 40,
         color: '#90ee90'
     },
-    data: {
+    date: {
         fontSize: 18,
         color: '#90ee90'
     },
-    registros: {
+    registries: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'flex-start',
         justifyContent: 'center',
     },
-
-    registro: {
+    registry: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
@@ -102,19 +101,19 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.2)',
         opacity: 0.6
     },
-    saldoTempoReal: {
+    liveBalance: {
         marginVertical: 10
     },
-    entrada: {
+    entrance: {
         color: 'lightblue'
     },
-    entradaAlmoco: {
+    entranceLunch: {
         color: 'lightyellow'
     },
-    saidaAlmoco: {
+    leaveLunch: {
         color: 'lightyellow'
     },
-    saida: {
+    leave: {
         color: 'lightblue'
     }
 });
