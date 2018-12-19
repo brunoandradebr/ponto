@@ -207,7 +207,11 @@ export class AppStorage {
             let today = new Date()
             let history = await AppStorage.getHistory(today.getFullYear())
             if (history && history[today.getMonth()]) {
-                return history[today.getMonth()][today.getDate()]
+                if (history[today.getMonth()][today.getDate()]) {
+                    return history[today.getMonth()][today.getDate()]
+                } else {
+                    return []
+                }
             } else {
                 return []
             }

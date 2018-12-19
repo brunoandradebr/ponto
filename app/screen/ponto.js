@@ -58,19 +58,34 @@ export default class Ponto extends Component {
 
     }
 
+    /**
+     * Register current event
+     * 
+     * @param {string} event 
+     * 
+     * @return {void}
+     */
     async register(event) {
 
-        // DEBUG
+        // vibrate feedback
+        Vibration.vibrate()
+
+        // if registered all events
         if (event == 'closed') {
+            AppStorage.clear()
             return
         }
 
+        // register current time
         await AppStorage.registerNow(event)
 
+        // get all registered events
         let events = await AppStorage.getEvents()
 
+        // get current event
         let currentEvent = await AppStorage.getCurrentEvent()
 
+        // update state
         this.setState({
             currentEvent: currentEvent,
             entrance: events[0],
@@ -78,9 +93,6 @@ export default class Ponto extends Component {
             leaveLunch: events[2],
             leave: events[3]
         })
-
-        Vibration.vibrate()
-
     }
 
     render() {
@@ -127,15 +139,15 @@ const styles = StyleSheet.create({
         height: 250,
         borderWidth: 1,
         borderRadius: 150,
-        borderColor: '#90ee90',
+        borderColor: Color.accent,
     },
     hour: {
         fontSize: 40,
-        color: '#90ee90'
+        color: Color.accent
     },
     date: {
         fontSize: 18,
-        color: '#90ee90'
+        color: Color.accent
     },
     registries: {
         flex: 1,
@@ -150,22 +162,23 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         paddingVertical: 8,
         borderRadius: 3,
-        backgroundColor: 'rgba(0,0,0,0.2)',
-        opacity: 0.6
+        minHeight: 30,
+        maxHeight: 30,
+        backgroundColor: 'rgba(0,0,0,0.1)'
     },
     liveBalance: {
         marginVertical: 10
     },
     entrance: {
-        color: 'lightblue'
+        color: Color.accent2
     },
     entranceLunch: {
-        color: 'lightyellow'
+        color: Color.accent3
     },
     leaveLunch: {
-        color: 'lightyellow'
+        color: Color.accent3
     },
     leave: {
-        color: 'lightblue'
+        color: Color.accent2
     }
 });

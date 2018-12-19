@@ -2,5 +2,7 @@
     "primary": "#242528",
     "primary2": "#202124",
     "secondary": "#ffffff33",
-    "accent": "#90ee90"
+    "accent": "#90ee90",
+    "accent2": "lightblue",
+    "accent3": "lightyellow"
 }
