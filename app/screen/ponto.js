@@ -5,6 +5,8 @@ import { StyleSheet, Text, View, TouchableOpacity, Vibration } from 'react-nativ
 // app storage
 import { AppStorage } from '../storage/AppStorage'
 
+import Registry from '../component/ponto/registry'
+
 // moment
 import 'moment/locale/pt-br'
 import moment from 'moment'
@@ -55,7 +57,6 @@ export default class Ponto extends Component {
             leaveLunch: leaveLunch,
             leave: leave
         })
-
     }
 
     /**
@@ -95,6 +96,24 @@ export default class Ponto extends Component {
         })
     }
 
+    /**
+     * Updates an event time
+     * 
+     * @param {string} event 
+     * @param {date} date 
+     * 
+     * @return {void}
+     */
+    updateEventTime(event, date) {
+
+        // modifier
+        let state = {}
+        // modifies an event time
+        state[event] = date.toString()
+        // update state
+        this.setState(state)
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -110,10 +129,10 @@ export default class Ponto extends Component {
                 </View>
 
                 <View style={styles.registries}>
-                    <View style={styles.registry}><Text style={styles.entrance}>{this.state.entrance ? moment(this.state.entrance).format('HH:mm') : ''}</Text></View>
-                    <View style={styles.registry}><Text style={styles.entranceLunch}>{this.state.entranceLunch ? moment(this.state.entranceLunch).format('HH:mm') : ''}</Text></View>
-                    <View style={styles.registry}><Text style={styles.leaveLunch}>{this.state.leaveLunch ? moment(this.state.leaveLunch).format('HH:mm') : ''}</Text></View>
-                    <View style={styles.registry}><Text style={styles.leave}>{this.state.leave ? moment(this.state.leave).format('HH:mm') : ''}</Text></View>
+                    <Registry date={this.state.entrance} onChange={this.updateEventTime.bind(this)} event='entrance'></Registry>
+                    <Registry date={this.state.entranceLunch} onChange={this.updateEventTime.bind(this)} event='entranceLunch'></Registry>
+                    <Registry date={this.state.leaveLunch} onChange={this.updateEventTime.bind(this)} event='leaveLunch'></Registry>
+                    <Registry date={this.state.leave} onChange={this.updateEventTime.bind(this)} event='leave'></Registry>
                 </View>
 
             </View>
@@ -149,36 +168,13 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: Color.accent
     },
+    liveBalance: {
+        marginVertical: 10
+    },
     registries: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'flex-start',
         justifyContent: 'center',
-    },
-    registry: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginHorizontal: 5,
-        paddingVertical: 8,
-        borderRadius: 3,
-        minHeight: 30,
-        maxHeight: 30,
-        backgroundColor: 'rgba(0,0,0,0.1)'
-    },
-    liveBalance: {
-        marginVertical: 10
-    },
-    entrance: {
-        color: Color.accent2
-    },
-    entranceLunch: {
-        color: Color.accent3
-    },
-    leaveLunch: {
-        color: Color.accent3
-    },
-    leave: {
-        color: Color.accent2
     }
-});
+})

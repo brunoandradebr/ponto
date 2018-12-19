@@ -164,7 +164,7 @@ export class AppStorage {
      * @param {number} day 
      * @param {string} event 
      * 
-     * @return {array}
+     * @return {boolean}
      */
     static async getEvent(year = null, month = null, day = null, event = null) {
 
@@ -182,7 +182,7 @@ export class AppStorage {
             if (history && history[today.getMonth()]) {
                 return history[today.getMonth()][today.getDate()][eventIndex]
             } else {
-                return []
+                return null
             }
         }
 
