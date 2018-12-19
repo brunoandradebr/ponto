@@ -7,3 +7,4 @@ npm-debug.*
 *.mobileprovision
 babel.config.js
 .watchmanconfig
+package-lock.json

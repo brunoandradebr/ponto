@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Vibration } from 'react-native';
 
 // app storage
 import { AppStorage } from '../storage/AppStorage'
@@ -18,7 +18,11 @@ export default class Ponto extends Component {
         super(props)
 
         this.state = {
-            currentEvent: 'entrance',
+            currentEvent: null,
+            entrance: null,
+            entranceLunch: null,
+            leaveLunch: null,
+            leave: null,
             currentTime: new Date()
         }
 
@@ -32,9 +36,50 @@ export default class Ponto extends Component {
 
     async componentDidMount() {
 
-        history = await AppStorage.allHistory()
+        // get today events
+        let events = await AppStorage.getEvents()
 
-        console.log(history)
+        let entrance = events[0]
+        let entranceLunch = events[1]
+        let leaveLunch = events[2]
+        let leave = events[3]
+
+        // get current event
+        let currentEvent = await AppStorage.getCurrentEvent()
+
+        // update events state
+        this.setState({
+            currentEvent: currentEvent,
+            entrance: entrance,
+            entranceLunch: entranceLunch,
+            leaveLunch: leaveLunch,
+            leave: leave
+        })
+
+    }
+
+    async register(event) {
+
+        // DEBUG
+        if (event == 'closed') {
+            return
+        }
+
+        await AppStorage.registerNow(event)
+
+        let events = await AppStorage.getEvents()
+
+        let currentEvent = await AppStorage.getCurrentEvent()
+
+        this.setState({
+            currentEvent: currentEvent,
+            entrance: events[0],
+            entranceLunch: events[1],
+            leaveLunch: events[2],
+            leave: events[3]
+        })
+
+        Vibration.vibrate()
 
     }
 
@@ -43,7 +88,7 @@ export default class Ponto extends Component {
             <View style={styles.container}>
 
                 <View style={styles.pontoContainer}>
-                    <TouchableOpacity onLongPress={(e) => { }}>
+                    <TouchableOpacity onLongPress={(e) => { this.register(this.state.currentEvent) }}>
                         <View style={styles.ponto}>
                             <Text style={styles.hour}>{moment(new Date()).format('HH:mm:ss')}</Text>
                             <Text style={styles.date}> {moment(new Date()).format('DD [de] MMM')}</Text>
@@ -53,10 +98,10 @@ export default class Ponto extends Component {
                 </View>
 
                 <View style={styles.registries}>
-                    <View style={styles.registry}><Text style={styles.entrance}>09:30</Text></View>
-                    <View style={styles.registry}><Text style={styles.entranceLunch}>11:30</Text></View>
-                    <View style={styles.registry}><Text style={styles.leaveLunch}>12:30</Text></View>
-                    <View style={styles.registry}><Text style={styles.leave}>18:30</Text></View>
+                    <View style={styles.registry}><Text style={styles.entrance}>{this.state.entrance ? moment(this.state.entrance).format('HH:mm') : ''}</Text></View>
+                    <View style={styles.registry}><Text style={styles.entranceLunch}>{this.state.entranceLunch ? moment(this.state.entranceLunch).format('HH:mm') : ''}</Text></View>
+                    <View style={styles.registry}><Text style={styles.leaveLunch}>{this.state.leaveLunch ? moment(this.state.leaveLunch).format('HH:mm') : ''}</Text></View>
+                    <View style={styles.registry}><Text style={styles.leave}>{this.state.leave ? moment(this.state.leave).format('HH:mm') : ''}</Text></View>
                 </View>
 
             </View>
