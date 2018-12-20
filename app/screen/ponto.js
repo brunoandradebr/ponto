@@ -73,7 +73,7 @@ export default class Ponto extends Component {
 
         // if registered all events
         if (event == 'closed') {
-            AppStorage.clear()
+            //AppStorage.clear()
             return
         }
 
