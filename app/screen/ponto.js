@@ -1,10 +1,14 @@
 import React, { Component } from 'react'
 
-import { StyleSheet, Text, View, TouchableOpacity, Vibration } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Vibration } from 'react-native'
 
 // app storage
 import { AppStorage } from '../storage/AppStorage'
 
+// app locale
+import AppLocale from '../AppLocale'
+
+// registry component
 import Registry from '../component/ponto/registry'
 
 // moment
@@ -20,6 +24,7 @@ export default class Ponto extends Component {
         super(props)
 
         this.state = {
+            locale: null,
             currentEvent: null,
             entrance: null,
             entranceLunch: null,
@@ -51,12 +56,22 @@ export default class Ponto extends Component {
 
         // update events state
         this.setState({
+            locale: await AppLocale.translate(),
             currentEvent: currentEvent,
             entrance: entrance,
             entranceLunch: entranceLunch,
             leaveLunch: leaveLunch,
             leave: leave
         })
+
+        // ever enter this component
+        this.onEnterEvent = this.props.navigation.addListener('didFocus', () => {
+        })
+
+    }
+
+    componentWillUnmount() {
+        this.onEnterEvent.remove();
     }
 
     /**
@@ -115,6 +130,10 @@ export default class Ponto extends Component {
     }
 
     render() {
+
+        // not loaded locale object yet
+        if (!this.state.locale) return null
+
         return (
             <View style={styles.container}>
 
@@ -123,7 +142,7 @@ export default class Ponto extends Component {
                         <View style={styles.ponto}>
                             <Text style={styles.hour}>{moment(new Date()).format('HH:mm:ss')}</Text>
                             <Text style={styles.date}> {moment(new Date()).format('DD [de] MMM')}</Text>
-                            <Text style={[styles.liveBalance, { color: Color.secondary }]}>Um horário qualquer</Text>
+                            <Text style={[styles.liveBalance, { color: Color.secondary }]}>{this.state.locale.ponto.balanceMessage}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>

@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 
 import { StyleSheet, Text, View } from 'react-native'
 
+// app locale
+import AppLocale from '../AppLocale'
+
+// select component
 import RNPickerSelect from 'react-native-picker-select'
 
 // app colors
@@ -13,6 +17,7 @@ export default class History extends Component {
         super(props)
 
         this.state = {
+            locale: null,
             year: 2018,
             years: [
                 { label: '2018', value: 2018 }
@@ -21,14 +26,14 @@ export default class History extends Component {
             months: [
                 { label: 'Janeiro', value: 0 },
                 { label: 'Fevereiro', value: 1 },
-                { label: 'Março	', value: 2 },
-                { label: 'Abril	', value: 3 },
-                { label: 'Maio	', value: 4 },
-                { label: 'Junho	', value: 5 },
-                { label: 'Julho	', value: 6 },
-                { label: 'Agosto	', value: 7 },
+                { label: 'Março', value: 2 },
+                { label: 'Abril', value: 3 },
+                { label: 'Maio', value: 4 },
+                { label: 'Junho', value: 5 },
+                { label: 'Julho', value: 6 },
+                { label: 'Agosto', value: 7 },
                 { label: 'Setembro', value: 8 },
-                { label: 'Outubro	', value: 9 },
+                { label: 'Outubro', value: 9 },
                 { label: 'Novembro', value: 10 },
                 { label: 'Dezembro', value: 11 },
             ]
@@ -36,7 +41,28 @@ export default class History extends Component {
 
     }
 
+    async componentDidMount() {
+
+        // get locale object
+        this.setState({
+            locale: await AppLocale.translate()
+        })
+
+        // ever enter this component
+        this.onEnterEvent = this.props.navigation.addListener('didFocus', () => {
+        })
+
+    }
+
+    componentWillUnmount() {
+        this.onEnterEvent.remove();
+    }
+
     render() {
+
+        // not loaded locale object yet
+        if (!this.state.locale) return null
+
         return (
             <View style={styles.container}>
                 <View style={styles.selectContainer}>

@@ -4,6 +4,9 @@ import { StatusBar, StyleSheet, View } from 'react-native';
 
 import { Constants } from 'expo'
 
+// app locale
+import AppLocale from './app/AppLocale'
+
 // app colors
 import Color from './app/color.json'
 
@@ -14,6 +17,15 @@ import MainNavigation from './app/router'
 StatusBar.setHidden(true)
 
 export default class App extends React.Component {
+
+  constructor(props) {
+    super(props)
+
+    // save locale to storage
+    AppLocale.initialize()
+
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -29,4 +41,4 @@ const styles = StyleSheet.create({
     backgroundColor: Color.primary,
     paddingTop: Constants.statusBarHeight
   }
-});
+})
