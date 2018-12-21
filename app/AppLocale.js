@@ -13,6 +13,21 @@ export default class AppLocale {
                     balanceMessage: 'Um horário qualquer'
                 },
                 history: {
+                    balanceLabel: 'Saldo',
+                    year: 'Ano',
+                    month: 'Mês',
+                    month0: 'Janeiro',
+                    month1: 'Fevereiro',
+                    month2: 'Março',
+                    month3: 'Abril',
+                    month4: 'Maio',
+                    month5: 'Junho',
+                    month6: 'Julho',
+                    month7: 'Agosto',
+                    month8: 'Setembro',
+                    month9: 'Outubro',
+                    month10: 'Novembro',
+                    month11: 'Dezembro'
                 },
                 settings: {
                     text: 'Configurações'
@@ -23,6 +38,21 @@ export default class AppLocale {
                     balanceMessage: 'Any time'
                 },
                 history: {
+                    balanceLabel: 'Balance',
+                    year: 'Year',
+                    month: 'Month',
+                    month0: 'January',
+                    month1: 'February',
+                    month2: 'March',
+                    month3: 'April',
+                    month4: 'May',
+                    month5: 'June',
+                    month6: 'July',
+                    month7: 'August',
+                    month8: 'September',
+                    month9: 'October',
+                    month10: 'November',
+                    month11: 'December'
                 },
                 settings: {
                     text: 'Settings'

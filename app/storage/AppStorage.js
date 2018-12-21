@@ -144,16 +144,28 @@ export class AppStorage {
     }
 
     /**
-     * Get year object
+     * Get year/month object
      * 
      * @param {number} year
+     * @param {number} month
      * 
      * @return {object} 
      */
-    static async getHistory(year) {
+    static async getHistory(year, month = null) {
+
+        if (!year) return []
+
         let history = await AppStorage.allHistory()
+
         history = JSON.parse(history)
-        return history[year]
+
+        // get year only
+        if (!month) {
+            return history[year]
+        } else {
+            return history[year][month]
+        }
+
     }
 
     /**

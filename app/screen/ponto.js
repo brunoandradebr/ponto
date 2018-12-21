@@ -41,31 +41,30 @@ export default class Ponto extends Component {
 
     }
 
-    async componentDidMount() {
-
-        // get today events
-        let events = await AppStorage.getEvents()
-
-        let entrance = events[0]
-        let entranceLunch = events[1]
-        let leaveLunch = events[2]
-        let leave = events[3]
-
-        // get current event
-        let currentEvent = await AppStorage.getCurrentEvent()
-
-        // update events state
-        this.setState({
-            locale: await AppLocale.translate(),
-            currentEvent: currentEvent,
-            entrance: entrance,
-            entranceLunch: entranceLunch,
-            leaveLunch: leaveLunch,
-            leave: leave
-        })
+    componentDidMount() {
 
         // ever enter this component
-        this.onEnterEvent = this.props.navigation.addListener('didFocus', () => {
+        this.onEnterEvent = this.props.navigation.addListener('didFocus', async () => {
+            // get today events
+            let events = await AppStorage.getEvents()
+
+            let entrance = events[0]
+            let entranceLunch = events[1]
+            let leaveLunch = events[2]
+            let leave = events[3]
+
+            // get current event
+            let currentEvent = await AppStorage.getCurrentEvent()
+
+            // update events state
+            this.setState({
+                locale: await AppLocale.translate(),
+                currentEvent: currentEvent,
+                entrance: entrance,
+                entranceLunch: entranceLunch,
+                leaveLunch: leaveLunch,
+                leave: leave
+            })
         })
 
     }
