@@ -34,7 +34,14 @@ export default class Registry extends Component {
      * @return {void}
      */
     toggleTimePicker = () => {
-        this.setState({ timePickerVisible: !this.state.timePickerVisible, date: new Date(this.props.date) })
+
+        let date = this.props.date ? new Date(this.props.date) : new Date()
+
+        if (this.props.year && !this.props.date) {
+            date = new Date(this.props.year, this.props.month, this.props.day)
+        }
+
+        this.setState({ timePickerVisible: !this.state.timePickerVisible, date: date })
     }
 
     /**
@@ -78,11 +85,11 @@ export default class Registry extends Component {
 
         return (
             <View style={styles.container}>
-                <View style={styles.registry}>
-                    <TouchableOpacity onPress={() => this.toggleTimePicker()}>
+                <TouchableOpacity onPress={() => this.toggleTimePicker()}>
+                    <View style={styles.registry}>
                         <Text style={styles[this.props.event]}>{dateText}</Text>
-                    </TouchableOpacity>
-                </View>
+                    </View>
+                </TouchableOpacity>
                 <DateTimePicker
                     mode='time'
                     date={this.state.date ? this.state.date : this.state.defaultDate}

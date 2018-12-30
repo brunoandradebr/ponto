@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { StyleSheet, FlatList, Text, View } from 'react-native'
+import { StyleSheet, FlatList, Text, View, ActivityIndicator } from 'react-native'
 
 // app colors
 import Color from '../color.json'
@@ -20,7 +20,6 @@ import RNPickerSelect from 'react-native-picker-select'
 
 // app registry item
 import Registry from '../component/ponto/registry'
-//import RegistryItem from '../component/history/registryItem'
 
 export default class History extends Component {
 
@@ -39,6 +38,7 @@ export default class History extends Component {
         let locale = await AppLocale.translate()
 
         this.setState({
+            reload: true,
             locale: locale,
             year: null,
             // TODO - get years from saved registries
@@ -70,12 +70,19 @@ export default class History extends Component {
 
             // set list to current year month
             this.setState({
+                reload: true,
                 year: new Date().getFullYear(),
                 month: new Date().getMonth(),
                 registries: this.changeList(new Date().getFullYear(), new Date().getMonth())
             })
 
             //}
+
+            setTimeout(() => {
+                this.setState({
+                    reload: false
+                })
+            }, 300);
 
         })
     }
@@ -142,6 +149,31 @@ export default class History extends Component {
 
     }
 
+    /**
+     * Updates an event time
+     * 
+     * @param {string} event 
+     * @param {date} date 
+     * 
+     * @return {void}
+     */
+    updateEventTime(day, event, date) {
+
+        let hour = date.getHours()
+        let minutes = date.getMinutes()
+
+        let dateObject = new Date(this.state.year, this.state.month, day, hour, minutes)
+
+        let currentEvent = Object.assign([], this.state.registries)
+
+        currentEvent[day - 1][event] = dateObject
+
+        this.setState({
+            registries: currentEvent
+        })
+
+    }
+
     componentWillUnmount() {
         this.onEnterEvent.remove();
     }
@@ -151,16 +183,18 @@ export default class History extends Component {
         // not loaded locale object yet
         if (!this.state.locale) return null
 
+        if (this.state.reload) return <ActivityIndicator></ActivityIndicator>
+
         renderItem = ({ item }) => {
             return (
                 <View style={styles.item}>
                     <View style={styles.dayContainer}>
                         <Text style={styles.day}>{item.day}</Text>
                     </View>
-                    <Registry onChange={this.changeList.bind(this, this.state.year, this.state.month)} date={item.entrance} event='entrance'></Registry>
-                    <Registry onChange={this.changeList.bind(this, this.state.year, this.state.month)} date={item.entranceLunch} event='entranceLunch'></Registry>
-                    <Registry onChange={this.changeList.bind(this, this.state.year, this.state.month)} date={item.leaveLunch} event='leaveLunch'></Registry>
-                    <Registry onChange={this.changeList.bind(this, this.state.year, this.state.month)} date={item.leave} event='leave'></Registry>
+                    <Registry onChange={this.updateEventTime.bind(this, item.day)} day={item.day} month={this.state.month} year={this.state.year} date={item.entrance} event='entrance'></Registry>
+                    <Registry onChange={this.updateEventTime.bind(this, item.day)} day={item.day} month={this.state.month} year={this.state.year} date={item.entranceLunch} event='entranceLunch'></Registry>
+                    <Registry onChange={this.updateEventTime.bind(this, item.day)} day={item.day} month={this.state.month} year={this.state.year} date={item.leaveLunch} event='leaveLunch'></Registry>
+                    <Registry onChange={this.updateEventTime.bind(this, item.day)} day={item.day} month={this.state.month} year={this.state.year} date={item.leave} event='leave'></Registry>
                     <Text style={styles.dayBalance}>{'+18min'}</Text>
                 </View>
             )

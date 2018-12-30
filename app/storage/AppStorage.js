@@ -163,7 +163,11 @@ export class AppStorage {
         if (!month) {
             return history[year]
         } else {
-            return history[year][month]
+            if (history[year]) {
+                return history[year][month]
+            } else {
+                return []
+            }
         }
 
     }
