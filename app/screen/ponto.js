@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 
 import { StyleSheet, Text, View, TouchableOpacity, Vibration } from 'react-native'
 
+// utils functions
+import { getDayBalance } from '../utils/utils'
+
 // app storage
 import { AppStorage } from '../storage/AppStorage'
 
@@ -87,7 +90,7 @@ export default class Ponto extends Component {
 
         // if registered all events
         if (event == 'closed') {
-            //AppStorage.clear()
+            AppStorage.clear()
             return
         }
 
@@ -133,6 +136,8 @@ export default class Ponto extends Component {
         // not loaded locale object yet
         if (!this.state.locale) return null
 
+        let balanceMessage = getDayBalance(this.state.entrance, this.state.entranceLunch, this.state.leaveLunch, this.state.leave, true)
+
         return (
             <View style={styles.container}>
 
@@ -141,7 +146,7 @@ export default class Ponto extends Component {
                         <View style={styles.ponto}>
                             <Text style={styles.hour}>{moment(new Date()).format('HH:mm:ss')}</Text>
                             <Text style={styles.date}> {moment(new Date()).format('DD [de] MMM')}</Text>
-                            <Text style={[styles.liveBalance, { color: Color.secondary }]}>{this.state.locale.ponto.balanceMessage}</Text>
+                            <Text style={[styles.liveBalance, { color: balanceMessage.text == '----' ? Color.secondary : balanceMessage.minutes > 0 ? Color.accent : '#f46' }]}>{balanceMessage.text}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>

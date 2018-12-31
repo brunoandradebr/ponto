@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 
 import { StyleSheet, FlatList, Text, View, ActivityIndicator } from 'react-native'
 
+// utils functions
+import { getDayBalance } from '../utils/utils'
+
 // app colors
 import Color from '../color.json'
 
@@ -13,7 +16,7 @@ import { AppStorage } from '../storage/AppStorage';
 
 // moment
 import 'moment/locale/pt-br'
-import moment from 'moment'
+import moment, { min } from 'moment'
 
 // select component
 import RNPickerSelect from 'react-native-picker-select'
@@ -60,7 +63,11 @@ export default class History extends Component {
                 { label: locale.history.month10, value: 10 },
                 { label: locale.history.month11, value: 11 },
             ],
-            registries: []
+            registries: [],
+            balanceTotal: {
+                minutes: 0,
+                text: '----'
+            }
         })
 
         // ever enter this component
@@ -103,6 +110,21 @@ export default class History extends Component {
 
     }
 
+    getBalanceText(balanceTotal) {
+
+        let hours = balanceTotal >= 60 || balanceTotal <= -60 ? Math.floor(Math.abs(balanceTotal) / 60) : 0
+        let minutes = balanceTotal % 60
+
+        balanceTotalText = hours != 0 ? hours + 'h' : ''
+        balanceTotalText += minutes != 0 ? hours != 0 ? Math.abs(minutes) + 'm' : minutes + 'm' : ''
+
+        return {
+            minutes: balanceTotal,
+            text: balanceTotal != 0 ? balanceTotalText : '----'
+        }
+
+    }
+
     async changeList(year, month = null) {
 
         // get month number of days
@@ -113,7 +135,7 @@ export default class History extends Component {
 
         // create n days registry default object
         for (let i = 0; i < daysInMonth; i++) {
-            registries.push({ day: i + 1, entrance: null, entranceLunch: null, leaveLunch: null, leave: null })
+            registries.push({ day: i + 1, entrance: null, entranceLunch: null, leaveLunch: null, leave: null, balance: null })
         }
 
         // get all saved registries from current year and month
@@ -123,6 +145,8 @@ export default class History extends Component {
         if (year == undefined || month == undefined)
             registries = []
 
+        let balanceTotal = 0
+
         // merge saved registry to registries list
         for (let i in savedRegistries) {
 
@@ -131,21 +155,41 @@ export default class History extends Component {
 
             // for each list day
             registries.map((_registry) => {
+
                 // if saved registry has an event time, update list day
                 if (_registry.day == registryDay) {
-                    _registry.entrance = registry[0]
-                    _registry.entranceLunch = registry[1]
-                    _registry.leaveLunch = registry[2]
-                    _registry.leave = registry[3]
+
+                    let entrance = registry[0]
+                    let entranceLunch = registry[1]
+                    let leaveLunch = registry[2]
+                    let leave = registry[3]
+
+                    _registry.entrance = entrance
+                    _registry.entranceLunch = entranceLunch
+                    _registry.leaveLunch = leaveLunch
+                    _registry.leave = leave
+                    _registry.balance = getDayBalance(entrance, entranceLunch, leaveLunch, leave)
+
+                    balanceTotal += _registry.balance.minutes
+
                 }
+
             })
 
         }
 
         // update list registries
         this.setState({
-            registries: registries
+            reload: true,
+            registries: registries,
+            balanceTotal: this.getBalanceText(balanceTotal)
         })
+
+        setTimeout(() => {
+            this.setState({
+                reload: false
+            })
+        }, 300);
 
     }
 
@@ -166,10 +210,25 @@ export default class History extends Component {
 
         let currentEvent = Object.assign([], this.state.registries)
 
-        currentEvent[day - 1][event] = dateObject
+        let dayEvent = currentEvent[day - 1]
+
+        dayEvent[event] = dateObject
+
+        dayEvent.balance = getDayBalance(dayEvent.entrance, dayEvent.entranceLunch, dayEvent.leaveLunch, dayEvent.leave)
+
+        let balanceTotal = 0
+        for (let i in currentEvent) {
+
+            let dayEvent = currentEvent[i]
+
+            if (dayEvent.balance)
+                balanceTotal += dayEvent.balance.minutes
+
+        }
 
         this.setState({
-            registries: currentEvent
+            registries: currentEvent,
+            balanceTotal: this.getBalanceText(balanceTotal)
         })
 
     }
@@ -183,8 +242,6 @@ export default class History extends Component {
         // not loaded locale object yet
         if (!this.state.locale) return null
 
-        if (this.state.reload) return <ActivityIndicator></ActivityIndicator>
-
         renderItem = ({ item }) => {
             return (
                 <View style={styles.item}>
@@ -195,7 +252,9 @@ export default class History extends Component {
                     <Registry onChange={this.updateEventTime.bind(this, item.day)} day={item.day} month={this.state.month} year={this.state.year} date={item.entranceLunch} event='entranceLunch'></Registry>
                     <Registry onChange={this.updateEventTime.bind(this, item.day)} day={item.day} month={this.state.month} year={this.state.year} date={item.leaveLunch} event='leaveLunch'></Registry>
                     <Registry onChange={this.updateEventTime.bind(this, item.day)} day={item.day} month={this.state.month} year={this.state.year} date={item.leave} event='leave'></Registry>
-                    <Text style={styles.dayBalance}>{'+18min'}</Text>
+                    <View style={styles.dayBalanceContainer}>
+                        <Text style={[styles.dayBalance, item.balance && item.balance.text == '----' ? styles.dayBalanceNA : item.balance && item.balance.minutes < 0 ? styles.dayBalanceNegative : styles.dayBalancePositive]}>{item.balance ? item.balance.text : ''}</Text>
+                    </View>
                 </View>
             )
         }
@@ -203,6 +262,21 @@ export default class History extends Component {
         renderSeparator = () => {
             return <View style={styles.separator} />
         }
+
+        const historyListContent = (
+            <View style={{ flex: 1 }}>
+                <FlatList style={styles.lista}
+                    data={this.state.registries}
+                    renderItem={renderItem}
+                    keyExtractor={(item, i) => i + ''}
+                    ItemSeparatorComponent={renderSeparator}
+                />
+                <View style={styles.balanceContainer}>
+                    <Text style={styles.balanceLabel}>{this.state.locale.history.balanceLabel}</Text>
+                    <Text style={this.state.balanceTotal.minutes == 0 ? styles.noBalance : this.state.balanceTotal.minutes > 0 ? styles.dayBalancePositive : styles.dayBalanceNegative}>{this.state.balanceTotal.text}</Text>
+                </View>
+            </View>
+        )
 
         return (
             <View style={styles.container}>
@@ -236,17 +310,7 @@ export default class History extends Component {
 
                 <View style={styles.headerSeparator} />
 
-                <FlatList style={styles.lista}
-                    data={this.state.registries}
-                    renderItem={renderItem}
-                    keyExtractor={(item, i) => i + ''}
-                    ItemSeparatorComponent={renderSeparator}
-                />
-
-                <View style={styles.balanceContainer}>
-                    <Text style={styles.balanceLabel}>{this.state.locale.history.balanceLabel}</Text>
-                    <Text style={styles.noBalance}>{'----'}</Text>
-                </View>
+                {(this.state.reload) ? <View style={{ flex: 1, flexDirection: "column", justifyContent: "center" }}><ActivityIndicator color={Color.accent} /></View> : historyListContent}
 
             </View>
         )
@@ -278,7 +342,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     separator: {
-        width: '85%',
+        width: '70%',
         height: 1,
         marginLeft: '10%',
         backgroundColor: Color.primary2
@@ -288,7 +352,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        height: 60,
+        marginVertical: 20
     },
     dayContainer: {
         flexDirection: 'column',
@@ -301,9 +365,23 @@ const styles = StyleSheet.create({
         width: 20,
         marginHorizontal: 5
     },
+    dayBalanceContainer: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
     dayBalance: {
-        marginHorizontal: 5,
+        width: 55,
+        marginHorizontal: 5
+    },
+    dayBalancePositive: {
         color: Color.accent
+    },
+    dayBalanceNegative: {
+        color: '#f46'
+    },
+    dayBalanceNA: {
+        color: Color.secondary
     },
     // /list ----------------------------
 
@@ -313,6 +391,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-end',
         paddingVertical: 20,
+        paddingHorizontal: 20,
         borderTopWidth: 2,
         borderTopColor: Color.primary2,
     },
@@ -320,19 +399,17 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlign: 'right',
         marginRight: 20,
-        color: Color.secondary,
+        paddingHorizontal: 10,
+        color: Color.secondary
     },
     positiveBalance: {
-        paddingHorizontal: 10,
         color: Color.primary
     },
     negativeBalance: {
-        paddingHorizontal: 10,
         color: '#f46'
     },
     noBalance: {
-        color: Color.secondary,
-        paddingHorizontal: 10,
+        color: Color.secondary
     }
     // /balance ----------------------------
 })
