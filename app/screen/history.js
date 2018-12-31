@@ -16,7 +16,7 @@ import { AppStorage } from '../storage/AppStorage';
 
 // moment
 import 'moment/locale/pt-br'
-import moment, { min } from 'moment'
+import moment from 'moment-business-days'
 
 // select component
 import RNPickerSelect from 'react-native-picker-select'
@@ -127,15 +127,23 @@ export default class History extends Component {
 
     async changeList(year, month = null) {
 
+        let settings = JSON.parse(await AppStorage.settings())
+
         // get month number of days
         let daysInMonth = moment(new Date(year, month, 1)).daysInMonth()
+        let businessDays = 0
 
         // registries container
         let registries = []
 
         // create n days registry default object
         for (let i = 0; i < daysInMonth; i++) {
+
             registries.push({ day: i + 1, entrance: null, entranceLunch: null, leaveLunch: null, leave: null, balance: null })
+
+            if (moment(new Date(this.state.year, this.state.month, i + 1)).isBusinessDay())
+                businessDays++
+
         }
 
         // get all saved registries from current year and month
@@ -168,7 +176,7 @@ export default class History extends Component {
                     _registry.entranceLunch = entranceLunch
                     _registry.leaveLunch = leaveLunch
                     _registry.leave = leave
-                    _registry.balance = getDayBalance(entrance, entranceLunch, leaveLunch, leave)
+                    _registry.balance = getDayBalance(entrance, entranceLunch, leaveLunch, leave, settings.workHour, settings.lunchInterval)
 
                     balanceTotal += _registry.balance.minutes
 
@@ -177,6 +185,12 @@ export default class History extends Component {
             })
 
         }
+
+        let salaryPerHour = (businessDays, Math.round(2500 / businessDays) / 8)
+        let balanceSalary = salaryPerHour * (Math.abs(balanceTotal / 60))
+
+        // TODO - exibir o salario
+        console.log(salaryPerHour, balanceSalary)
 
         // update list registries
         this.setState({
@@ -201,7 +215,9 @@ export default class History extends Component {
      * 
      * @return {void}
      */
-    updateEventTime(day, event, date) {
+    async updateEventTime(day, event, date) {
+
+        let settings = JSON.parse(await AppStorage.settings())
 
         let hour = date.getHours()
         let minutes = date.getMinutes()
@@ -214,7 +230,7 @@ export default class History extends Component {
 
         dayEvent[event] = dateObject
 
-        dayEvent.balance = getDayBalance(dayEvent.entrance, dayEvent.entranceLunch, dayEvent.leaveLunch, dayEvent.leave)
+        dayEvent.balance = getDayBalance(dayEvent.entrance, dayEvent.entranceLunch, dayEvent.leaveLunch, dayEvent.leave, settings.workHour, settings.lunchInterval)
 
         let balanceTotal = 0
         for (let i in currentEvent) {
@@ -378,7 +394,7 @@ const styles = StyleSheet.create({
         color: Color.accent
     },
     dayBalanceNegative: {
-        color: '#f46'
+        color: Color.accent4
     },
     dayBalanceNA: {
         color: Color.secondary
@@ -406,7 +422,7 @@ const styles = StyleSheet.create({
         color: Color.primary
     },
     negativeBalance: {
-        color: '#f46'
+        color: Color.accent4
     },
     noBalance: {
         color: Color.secondary

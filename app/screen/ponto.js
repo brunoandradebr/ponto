@@ -48,6 +48,9 @@ export default class Ponto extends Component {
 
         // ever enter this component
         this.onEnterEvent = this.props.navigation.addListener('didFocus', async () => {
+
+            let settings = JSON.parse(await AppStorage.settings())
+
             // get today events
             let events = await AppStorage.getEvents()
 
@@ -66,7 +69,9 @@ export default class Ponto extends Component {
                 entrance: entrance,
                 entranceLunch: entranceLunch,
                 leaveLunch: leaveLunch,
-                leave: leave
+                leave: leave,
+                workHour: settings.workHour,
+                lunchInterval: settings.lunchInterval
             })
         })
 
@@ -90,7 +95,7 @@ export default class Ponto extends Component {
 
         // if registered all events
         if (event == 'closed') {
-            AppStorage.clear()
+            //AppStorage.clear()
             return
         }
 
@@ -136,7 +141,7 @@ export default class Ponto extends Component {
         // not loaded locale object yet
         if (!this.state.locale) return null
 
-        let balanceMessage = getDayBalance(this.state.entrance, this.state.entranceLunch, this.state.leaveLunch, this.state.leave, true)
+        let balanceMessage = getDayBalance(this.state.entrance, this.state.entranceLunch, this.state.leaveLunch, this.state.leave, this.state.workHour, this.state.lunchInterval, true)
 
         return (
             <View style={styles.container}>
@@ -145,8 +150,8 @@ export default class Ponto extends Component {
                     <TouchableOpacity onLongPress={(e) => { this.register(this.state.currentEvent) }}>
                         <View style={styles.ponto}>
                             <Text style={styles.hour}>{moment(new Date()).format('HH:mm:ss')}</Text>
-                            <Text style={styles.date}> {moment(new Date()).format('DD [de] MMM')}</Text>
-                            <Text style={[styles.liveBalance, { color: balanceMessage.text == '----' ? Color.secondary : balanceMessage.minutes > 0 ? Color.accent : '#f46' }]}>{balanceMessage.text}</Text>
+                            <Text style={styles.date}> {moment(new Date()).format('DD MMM')}</Text>
+                            <Text style={[styles.liveBalance, { color: balanceMessage.text == '----' ? Color.secondary : balanceMessage.minutes > 0 ? Color.accent : Color.accent4 }]}>{balanceMessage.text}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>

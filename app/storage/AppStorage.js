@@ -3,6 +3,54 @@ import { AsyncStorage } from 'react-native'
 export class AppStorage {
 
     /**
+     * Take app settings
+     * 
+     * @return {array}
+     */
+    static async settings() {
+
+        let settings = await AsyncStorage.getItem('settings')
+
+        if (!settings)
+            AsyncStorage.setItem('settings', JSON.stringify({
+                workHour: 8,
+                lunchInterval: 1
+            }))
+
+        return await AsyncStorage.getItem('settings')
+
+    }
+
+    static async clearSettings() {
+        AsyncStorage.setItem('settings', JSON.stringify({
+            workHour: 8,
+            lunchInterval: 1
+        }))
+    }
+
+    static async updateWorkHour(hour) {
+
+        let toSave = {
+            workHour: hour
+        }
+
+        // save to app storage
+        await AsyncStorage.mergeItem('settings', JSON.stringify(toSave))
+
+    }
+
+    static async updateLunchInterval(interval) {
+
+        let toSave = {
+            lunchInterval: interval
+        }
+
+        // save to app storage
+        await AsyncStorage.mergeItem('settings', JSON.stringify(toSave))
+
+    }
+
+    /**
      * Take app full history
      * 
      * @return {array}

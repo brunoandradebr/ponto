@@ -30,7 +30,10 @@ export default class AppLocale {
                     month11: 'Dezembro'
                 },
                 settings: {
-                    text: 'Configurações'
+                    workLabel: 'Horas',
+                    workHour: 'Horas de trabalho',
+                    lunchLabel: 'Intervalo',
+                    lunchInterval: 'Intervalo de almoço'
                 }
             },
             'en-NA': {
@@ -55,7 +58,10 @@ export default class AppLocale {
                     month11: 'December'
                 },
                 settings: {
-                    text: 'Settings'
+                    workLabel: 'Hours',
+                    workHour: 'Work hour',
+                    lunchLabel: 'Interval',
+                    lunchInterval: 'Lunch interval'
                 }
             }
         }
