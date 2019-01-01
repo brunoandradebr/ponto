@@ -40,14 +40,13 @@ export default class History extends Component {
         // get locale object
         let locale = await AppLocale.translate()
 
+        let years = await AppStorage.getYears()
+
         this.setState({
             reload: true,
             locale: locale,
             year: null,
-            // TODO - get years from saved registries
-            years: [
-                { label: '2018', value: 2018 }
-            ],
+            years: years,
             month: null,
             months: [
                 { label: locale.history.month0, value: 0 },
@@ -67,7 +66,8 @@ export default class History extends Component {
             balanceTotal: {
                 minutes: 0,
                 text: '----'
-            }
+            },
+            balanceSalary: null
         })
 
         // ever enter this component
@@ -186,17 +186,15 @@ export default class History extends Component {
 
         }
 
-        let salaryPerHour = (businessDays, Math.round(2500 / businessDays) / 8)
+        let salaryPerHour = (businessDays, Math.round(settings.salary / businessDays) / 8)
         let balanceSalary = salaryPerHour * (Math.abs(balanceTotal / 60))
-
-        // TODO - exibir o salario
-        console.log(salaryPerHour, balanceSalary)
 
         // update list registries
         this.setState({
             reload: true,
             registries: registries,
-            balanceTotal: this.getBalanceText(balanceTotal)
+            balanceTotal: this.getBalanceText(balanceTotal),
+            balanceSalary: balanceSalary
         })
 
         setTimeout(() => {
@@ -288,6 +286,9 @@ export default class History extends Component {
                     ItemSeparatorComponent={renderSeparator}
                 />
                 <View style={styles.balanceContainer}>
+                    <View style={styles.salaryContainer}>
+                        <Text style={styles.salary}>{'R$ ' + (2500 - this.state.balanceSalary)}</Text>
+                    </View>
                     <Text style={styles.balanceLabel}>{this.state.locale.history.balanceLabel}</Text>
                     <Text style={this.state.balanceTotal.minutes == 0 ? styles.noBalance : this.state.balanceTotal.minutes > 0 ? styles.dayBalancePositive : styles.dayBalanceNegative}>{this.state.balanceTotal.text}</Text>
                 </View>
@@ -417,6 +418,9 @@ const styles = StyleSheet.create({
         marginRight: 20,
         paddingHorizontal: 10,
         color: Color.secondary
+    },
+    salary: {
+        color: Color.accent
     },
     positiveBalance: {
         color: Color.primary

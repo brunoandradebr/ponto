@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Keyboard } from 'react-native';
+import { Input } from 'react-native-elements';
 
 // app locale
 import AppLocale from '../AppLocale'
@@ -111,6 +112,20 @@ export default class Settings extends Component {
                         />
                     </View>
                 </View>
+                <View style={styles.menuItem}>
+                    <Text style={styles.label}>{this.state.locale.settings.salary}</Text>
+                    <View style={styles.component}>
+                        <Input
+                            inputStyle={{ color: Color.accent, backgroundColor: Color.primary2, borderColor: Color.primary2, borderRadius: 30, paddingHorizontal: 20 }}
+                            onSubmitEditing={(value) => console.log(value)}
+                            inputContainerStyle={{ borderBottomWidth: 0 }}
+                            placeholderTextColor={Color.secondary}
+                            returnKeyType="done"
+                            keyboardAppearance="dark"
+                            keyboardType="numeric"
+                            placeholder='1500' />
+                    </View>
+                </View>
             </View>
         )
     }
@@ -128,10 +143,12 @@ const styles = StyleSheet.create({
     },
     label: {
         textTransform: 'uppercase',
-        width: 230,
-        color: Color.secondary
+        width: 200,
+        color: Color.secondary,
+        marginHorizontal: 20,
     },
     component: {
+        flex: 1,
     }
 })
 

@@ -14,7 +14,8 @@ export class AppStorage {
         if (!settings)
             AsyncStorage.setItem('settings', JSON.stringify({
                 workHour: 8,
-                lunchInterval: 1
+                lunchInterval: 1,
+                salary: 900
             }))
 
         return await AsyncStorage.getItem('settings')
@@ -63,6 +64,31 @@ export class AppStorage {
             AsyncStorage.setItem('history', JSON.stringify({}))
 
         return await AsyncStorage.getItem('history')
+
+    }
+
+    static async getYears() {
+
+        let allHistory = await AppStorage.allHistory()
+
+        let years = Object.keys(JSON.parse(allHistory))
+
+        let currentYear = new Date().getFullYear()
+
+        let hasCurrentYear = years.includes(currentYear)
+
+        if (!hasCurrentYear) years.push(currentYear)
+
+        let _return = []
+
+        years.map((year) => {
+            _return.push({
+                label: year + '',
+                value: year
+            })
+        })
+
+        return _return
 
     }
 

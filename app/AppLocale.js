@@ -32,6 +32,7 @@ export default class AppLocale {
                 settings: {
                     workLabel: 'Horas',
                     workHour: 'Horas de trabalho',
+                    salary: 'Salário',
                     lunchLabel: 'Intervalo',
                     lunchInterval: 'Intervalo de almoço'
                 }
@@ -60,6 +61,7 @@ export default class AppLocale {
                 settings: {
                     workLabel: 'Hours',
                     workHour: 'Work hour',
+                    salary: 'Salary',
                     lunchLabel: 'Interval',
                     lunchInterval: 'Lunch interval'
                 }
