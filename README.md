@@ -1,6 +1,10 @@
 # ponto
 React native app to register work hours
 
+# expo installation
+
+https://expo.io/@brunoandradebr/ponto
+
 #### install node js
 
 https://nodejs.org/en/download/
