@@ -33,7 +33,8 @@ export default class Ponto extends Component {
             entranceLunch: null,
             leaveLunch: null,
             leave: null,
-            currentTime: new Date()
+            currentTime: new Date(),
+            leaveTime: null
         }
 
         setInterval(() => {
@@ -45,6 +46,8 @@ export default class Ponto extends Component {
     }
 
     componentDidMount() {
+
+        //AppStorage.clear()
 
         // ever enter this component
         this.onEnterEvent = this.props.navigation.addListener('didFocus', async () => {
@@ -71,7 +74,8 @@ export default class Ponto extends Component {
                 leaveLunch: leaveLunch,
                 leave: leave,
                 workHour: settings.workHour,
-                lunchInterval: settings.lunchInterval
+                lunchInterval: settings.lunchInterval,
+                leaveTime: await this.getLeaveTime(entrance, entranceLunch, leaveLunch)
             })
         })
 
@@ -79,6 +83,28 @@ export default class Ponto extends Component {
 
     componentWillUnmount() {
         this.onEnterEvent.remove();
+    }
+
+    async getLeaveTime(entrance, entranceLunch, leaveLunch) {
+
+        let settings = JSON.parse(await AppStorage.settings())
+
+        let leaveTime = 0
+
+        if (entrance) {
+
+            let diffLunch = 0
+
+            if (entranceLunch && leaveLunch) {
+                let diff = moment.duration(moment(leaveLunch).diff(moment(entranceLunch)))
+                diffLunch = (settings.lunchInterval * 60) - diff.asMinutes()
+            }
+
+            leaveTime = moment(entrance).add(settings.workHour + settings.lunchInterval, 'h').subtract(diffLunch, 'm').format('HH:mm')
+        }
+
+        return leaveTime
+
     }
 
     /**
@@ -114,7 +140,8 @@ export default class Ponto extends Component {
             entrance: events[0],
             entranceLunch: events[1],
             leaveLunch: events[2],
-            leave: events[3]
+            leave: events[3],
+            leaveTime: await this.getLeaveTime(events[0], events[1], events[2])
         })
     }
 
@@ -126,14 +153,25 @@ export default class Ponto extends Component {
      * 
      * @return {void}
      */
-    updateEventTime(event, date) {
+    async updateEventTime(event, date) {
+
+        // get all registered events
+        let events = await AppStorage.getEvents()
+
+        // get current event
+        let currentEvent = await AppStorage.getCurrentEvent()
 
         // modifier
-        let state = {}
+        let state = {
+            currentEvent: currentEvent,
+            leaveTime: await this.getLeaveTime(events[0], events[1], events[2])
+        }
         // modifies an event time
-        state[event] = date.toString()
+        state[event] = date
+
         // update state
         this.setState(state)
+
     }
 
     render() {
@@ -152,6 +190,7 @@ export default class Ponto extends Component {
                             <Text style={styles.hour}>{moment(new Date()).format('HH:mm:ss')}</Text>
                             <Text style={styles.date}> {moment(new Date()).format('DD MMM')}</Text>
                             <Text style={[styles.liveBalance, { color: balanceMessage.text == '----' ? Color.secondary : balanceMessage.minutes > 0 ? Color.accent : Color.accent4 }]}>{balanceMessage.text}</Text>
+                            {this.state.leaveTime ? (<Text style={styles.leaveTime}>{this.state.locale.ponto.leaveText + ' ' + this.state.leaveTime}</Text>) : null}
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -198,6 +237,9 @@ const styles = StyleSheet.create({
     },
     liveBalance: {
         marginVertical: 10
+    },
+    leaveTime: {
+        color: Color.secondary
     },
     registries: {
         flex: 1,

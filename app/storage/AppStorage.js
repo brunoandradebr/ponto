@@ -245,7 +245,7 @@ export class AppStorage {
         history = JSON.parse(history)
 
         // get year only
-        if (!month) {
+        if (month == null) {
             return history[year]
         } else {
             if (history[year]) {

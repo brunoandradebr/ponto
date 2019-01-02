@@ -22,7 +22,7 @@ export const getDayBalance = (entrance, entranceLunch, leaveLunch, leave, workHo
         let diffLunch = moment.duration(moment(leaveLunch).diff(moment(entranceLunch)))
         let diffLunchMinutes = diffLunch.asMinutes()
 
-        let leaveTime = moment(entrance).add(workHour /* <-- work time */ + lunchInterval /* <-- lunch time */, 'h').subtract(diffLunchMinutes - (lunchInterval * 60), 'm')
+        let leaveTime = moment(entrance).add(workHour /* <-- work time */ + lunchInterval /* <-- lunch time */, 'h').subtract((lunchInterval * 60) - diffLunchMinutes, 'm')
 
         let diffEntrance = moment.duration(moment(leave).diff(leaveTime))
         let diffEntranceMinutes = diffEntrance.asMinutes()

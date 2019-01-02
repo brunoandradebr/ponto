@@ -25,7 +25,7 @@ export default class Settings extends Component {
             hour: 8,
             lunchInterval: 1,
             hours: [{ label: '1h', value: 1 }, { label: '2h', value: 2 }, { label: '3h', value: 3 }, { label: '4h', value: 4 }, { label: '5h', value: 5 }, { label: '6h', value: 6 }, { label: '7h', value: 7 }, { label: '8h', value: 8 }, { label: '9h', value: 9 }, { label: '10h', value: 10 }, { label: '11h', value: 11 }, { label: '12h', value: 12 }],
-            lunchIntervals: [{ label: '15m', value: 0.25 }, { label: '30m', value: 0.5 }, { label: '1h', value: 1 }]
+            lunchIntervals: [{ label: '15m', value: 0.25 }, { label: '30m', value: 0.5 }, { label: '1h', value: 1 }],
         }
 
     }
@@ -132,7 +132,7 @@ export default class Settings extends Component {
                             returnKeyType="done"
                             keyboardAppearance="dark"
                             keyboardType="numeric"
-                            defaultValue={this.state.salary}
+                            defaultValue={this.state.salary ? this.state.salary + '' : ''}
                             clearTextOnFocus={true}
                             placeholder='1500' />
                     </View>

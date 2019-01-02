@@ -10,7 +10,8 @@ export default class AppLocale {
         this.locale = {
             'pt-BR': {
                 ponto: {
-                    balanceMessage: 'Um horário qualquer'
+                    balanceMessage: 'Um horário qualquer',
+                    leaveText: 'saída',
                 },
                 history: {
                     balanceLabel: 'Saldo',
@@ -39,7 +40,8 @@ export default class AppLocale {
             },
             'en-NA': {
                 ponto: {
-                    balanceMessage: 'Any time'
+                    balanceMessage: 'Any time',
+                    leaveText: 'leave',
                 },
                 history: {
                     balanceLabel: 'Balance',

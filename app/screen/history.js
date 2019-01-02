@@ -119,7 +119,7 @@ export default class History extends Component {
         let minutes = balanceTotal % 60
 
         balanceTotalText = hours != 0 ? hours + 'h' : ''
-        balanceTotalText += minutes != 0 ? hours != 0 ? Math.abs(minutes) + 'm' : minutes + 'm' : ''
+        balanceTotalText += minutes != 0 ? hours != 0 ? Math.abs(Math.round(minutes)) + 'm' : Math.round(minutes) + 'm' : ''
 
         return {
             minutes: balanceTotal,
@@ -306,7 +306,7 @@ export default class History extends Component {
                 />
                 <View style={styles.balanceContainer}>
                     <View style={styles.salaryContainer}>
-                        {this.state.salary ? <Text style={styles.salary}>{'R$ ' + (this.state.salary - (this.state.balanceTotal.minutes < 0 ? Math.abs(this.state.balanceSalary) : 0))}</Text> : null}
+                        {this.state.salary ? <Text style={styles.salary}>{'R$ ' + ((this.state.salary - (this.state.balanceTotal.minutes < 0 ? Math.abs(this.state.balanceSalary) : 0))).toFixed(2)}</Text> : null}
                     </View>
                     <Text style={styles.balanceLabel}>{this.state.locale.history.balanceLabel}</Text>
                     <Text style={this.state.balanceTotal.minutes == 0 ? styles.noBalance : this.state.balanceTotal.minutes > 0 ? styles.dayBalancePositive : styles.dayBalanceNegative}>{this.state.balanceTotal.text}</Text>
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     dayBalance: {
-        width: 55,
+        width: 60,
         marginHorizontal: 5
     },
     dayBalancePositive: {
