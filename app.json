@@ -1,18 +1,21 @@
 {
   "expo": {
     "name": "ponto",
-    "description": "This project is really great.",
+    "description": "App que registra as horas de trabalho",
     "slug": "ponto",
     "privacy": "public",
     "sdkVersion": "31.0.0",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#202124"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
