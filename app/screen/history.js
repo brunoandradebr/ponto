@@ -94,7 +94,11 @@ export default class History extends Component {
                 })
             }, 300);
 
+            this.props.navigation.setParams({ tabTitle: locale.history.tabTitle })
+
         })
+
+        this.props.navigation.setParams({ tabTitle: locale.history.tabTitle })
     }
 
     onChangeYear(year) {

@@ -42,8 +42,12 @@ export default class Settings extends Component {
             salary: settings.salary
         })
 
+        this.props.navigation.setParams({ tabTitle: this.state.locale.settings.tabTitle })
+
         // ever enter this component
-        this.onEnterEvent = this.props.navigation.addListener('didFocus', () => { })
+        this.onEnterEvent = this.props.navigation.addListener('didFocus', () => {
+            this.props.navigation.setParams({ tabTitle: this.state.locale.settings.tabTitle })
+        })
 
     }
 

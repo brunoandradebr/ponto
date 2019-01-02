@@ -12,8 +12,10 @@ export default class AppLocale {
                 ponto: {
                     balanceMessage: 'Um horário qualquer',
                     leaveText: 'saída',
+                    tabTitle: 'Ponto',
                 },
                 history: {
+                    tabTitle: 'Histórico',
                     balanceLabel: 'Saldo',
                     year: 'Ano',
                     month: 'Mês',
@@ -31,6 +33,7 @@ export default class AppLocale {
                     month11: 'Dezembro'
                 },
                 settings: {
+                    tabTitle: 'Configurações',
                     workLabel: 'Horas',
                     workHour: 'Horas de trabalho',
                     salary: 'Salário',
@@ -42,8 +45,10 @@ export default class AppLocale {
                 ponto: {
                     balanceMessage: 'Any time',
                     leaveText: 'leave',
+                    tabTitle: 'Register',
                 },
                 history: {
+                    tabTitle: 'History',
                     balanceLabel: 'Balance',
                     year: 'Year',
                     month: 'Month',
@@ -61,6 +66,7 @@ export default class AppLocale {
                     month11: 'December'
                 },
                 settings: {
+                    tabTitle: 'Settings',
                     workLabel: 'Hours',
                     workHour: 'Work hour',
                     salary: 'Salary',

@@ -19,30 +19,44 @@ import Color from './color.json'
 // history navigation definitions
 const HistoryDefinition = {
     screen: History,
-    navigationOptions: ({ navigation }) => ({
-        title: 'Histórico',
-        tabBarIcon: ({ focused, tintColor }) => <Icon name={'calendar'} size={(Platform.OS === 'ios') ? 25 : 20} color={tintColor} />
-    })
+    navigationOptions: ({ navigation }) => {
+
+        let title = navigation.state.params ? navigation.state.params.tabTitle : ''
+
+        return ({
+            title: title,
+            tabBarIcon: ({ focused, tintColor }) => <Icon name={'calendar'} size={(Platform.OS === 'ios') ? 25 : 20} color={tintColor} />
+        })
+    }
 }
 
 // ponto navigation definitions
 const PontoDefinition = {
     screen: Ponto,
-    navigationOptions: ({ navigation }) => ({
-        tabBarIcon: ({ focused, tintColor }) => {
-            let icon = focused ? 'circle' : 'circle-o'
-            return <IconAwesome name={icon} size={(Platform.OS === 'ios') ? 25 : 20} color={tintColor} />;
-        },
-    })
+    navigationOptions: ({ navigation }) => {
+        let title = navigation.state.params ? navigation.state.params.tabTitle : ''
+        return ({
+            title: title,
+            tabBarIcon: ({ focused, tintColor }) => {
+                let icon = focused ? 'circle' : 'circle-o'
+                return <IconAwesome name={icon} size={(Platform.OS === 'ios') ? 25 : 20} color={tintColor} />;
+            },
+        })
+    }
 }
 
 // settings navigation definitions
 const SettingsDefinition = {
     screen: Settings,
-    navigationOptions: ({ navigation }) => ({
-        title: 'Configurações',
-        tabBarIcon: ({ focused, tintColor }) => <Icon name={'settings'} size={(Platform.OS === 'ios') ? 25 : 20} color={tintColor} />
-    })
+    navigationOptions: ({ navigation }) => {
+
+        let title = navigation.state.params ? navigation.state.params.tabTitle : ''
+
+        return ({
+            title: title,
+            tabBarIcon: ({ focused, tintColor }) => <Icon name={'settings'} size={(Platform.OS === 'ios') ? 25 : 20} color={tintColor} />
+        })
+    }
 }
 
 // tab bar definitions

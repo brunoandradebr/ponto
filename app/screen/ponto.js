@@ -77,6 +77,9 @@ export default class Ponto extends Component {
                 lunchInterval: settings.lunchInterval,
                 leaveTime: await this.getLeaveTime(entrance, entranceLunch, leaveLunch)
             })
+
+            this.props.navigation.setParams({ tabTitle: this.state.locale.ponto.tabTitle })
+
         })
 
     }
