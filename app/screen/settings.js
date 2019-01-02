@@ -38,7 +38,8 @@ export default class Settings extends Component {
         this.setState({
             locale: await AppLocale.translate(),
             hour: settings.workHour,
-            lunchInterval: settings.lunchInterval
+            lunchInterval: settings.lunchInterval,
+            salary: settings.salary
         })
 
         // ever enter this component
@@ -68,6 +69,13 @@ export default class Settings extends Component {
 
         await AppStorage.updateLunchInterval(interval)
 
+    }
+
+    async changeSalary(salary) {
+
+        await AppStorage.updateSalary(salary)
+
+        Keyboard.dismiss()
     }
 
     render() {
@@ -117,12 +125,15 @@ export default class Settings extends Component {
                     <View style={styles.component}>
                         <Input
                             inputStyle={{ color: Color.accent, backgroundColor: Color.primary2, borderColor: Color.primary2, borderRadius: 30, paddingHorizontal: 20 }}
-                            onSubmitEditing={(value) => console.log(value)}
+                            onEndEditing={(event) => this.changeSalary(event.nativeEvent.text)}
+                            blurOnSubmit={true}
                             inputContainerStyle={{ borderBottomWidth: 0 }}
                             placeholderTextColor={Color.secondary}
                             returnKeyType="done"
                             keyboardAppearance="dark"
                             keyboardType="numeric"
+                            defaultValue={this.state.salary}
+                            clearTextOnFocus={true}
                             placeholder='1500' />
                     </View>
                 </View>

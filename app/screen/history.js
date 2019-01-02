@@ -71,16 +71,19 @@ export default class History extends Component {
         })
 
         // ever enter this component
-        this.onEnterEvent = this.props.navigation.addListener('didFocus', () => {
+        this.onEnterEvent = this.props.navigation.addListener('didFocus', async () => {
 
             //if (this.state.year != new Date().getFullYear() || this.state.month != new Date().getMonth()) {
+
+            let settings = JSON.parse(await AppStorage.settings())
 
             // set list to current year month
             this.setState({
                 reload: true,
                 year: new Date().getFullYear(),
                 month: new Date().getMonth(),
-                registries: this.changeList(new Date().getFullYear(), new Date().getMonth())
+                registries: this.changeList(new Date().getFullYear(), new Date().getMonth()),
+                salary: settings.salary
             })
 
             //}
@@ -187,7 +190,7 @@ export default class History extends Component {
         }
 
         let salaryPerHour = (businessDays, Math.round(settings.salary / businessDays) / 8)
-        let balanceSalary = salaryPerHour * (Math.abs(balanceTotal / 60))
+        let balanceSalary = salaryPerHour * (balanceTotal / 60)
 
         // update list registries
         this.setState({
@@ -233,16 +236,32 @@ export default class History extends Component {
         let balanceTotal = 0
         for (let i in currentEvent) {
 
-            let dayEvent = currentEvent[i]
+            let _dayEvent = currentEvent[i]
 
-            if (dayEvent.balance)
-                balanceTotal += dayEvent.balance.minutes
+            if (_dayEvent.balance)
+                balanceTotal += _dayEvent.balance.minutes
 
         }
 
+        // get month number of days
+        let daysInMonth = moment(new Date(this.state.year, this.state.month, 1)).daysInMonth()
+        let businessDays = 0
+
+        // create n days registry default object
+        for (let i = 0; i < daysInMonth; i++) {
+
+            if (moment(new Date(this.state.year, this.state.month, i + 1)).isBusinessDay())
+                businessDays++
+
+        }
+
+        let salaryPerHour = (businessDays, Math.round(settings.salary / businessDays) / 8)
+        let balanceSalary = salaryPerHour * (balanceTotal / 60)
+
         this.setState({
             registries: currentEvent,
-            balanceTotal: this.getBalanceText(balanceTotal)
+            balanceTotal: this.getBalanceText(balanceTotal),
+            balanceSalary: balanceSalary
         })
 
     }
@@ -287,7 +306,7 @@ export default class History extends Component {
                 />
                 <View style={styles.balanceContainer}>
                     <View style={styles.salaryContainer}>
-                        <Text style={styles.salary}>{'R$ ' + (2500 - this.state.balanceSalary)}</Text>
+                        {this.state.salary ? <Text style={styles.salary}>{'R$ ' + (this.state.salary - (this.state.balanceTotal.minutes < 0 ? Math.abs(this.state.balanceSalary) : 0))}</Text> : null}
                     </View>
                     <Text style={styles.balanceLabel}>{this.state.locale.history.balanceLabel}</Text>
                     <Text style={this.state.balanceTotal.minutes == 0 ? styles.noBalance : this.state.balanceTotal.minutes > 0 ? styles.dayBalancePositive : styles.dayBalanceNegative}>{this.state.balanceTotal.text}</Text>

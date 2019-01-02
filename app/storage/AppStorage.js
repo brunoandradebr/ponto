@@ -51,6 +51,17 @@ export class AppStorage {
 
     }
 
+    static async updateSalary(salary) {
+
+        let toSave = {
+            salary: salary
+        }
+
+        // save to app storage
+        await AsyncStorage.mergeItem('settings', JSON.stringify(toSave))
+
+    }
+
     /**
      * Take app full history
      * 
@@ -75,7 +86,7 @@ export class AppStorage {
 
         let currentYear = new Date().getFullYear()
 
-        let hasCurrentYear = years.includes(currentYear)
+        let hasCurrentYear = years.includes(currentYear + '')
 
         if (!hasCurrentYear) years.push(currentYear)
 
@@ -84,7 +95,7 @@ export class AppStorage {
         years.map((year) => {
             _return.push({
                 label: year + '',
-                value: year
+                value: parseInt(year)
             })
         })
 
