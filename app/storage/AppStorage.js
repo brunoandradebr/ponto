@@ -1,97 +1,171 @@
 import { AsyncStorage } from 'react-native'
 
+/**
+ * Class with static methods to handle app storage
+ */
 export class AppStorage {
 
+    // ********************
+    // ***** SETTINGS ***** 
+    // ********************
+
     /**
-     * Take app settings
+     * Get app settings
      * 
-     * @return {array}
+     * @return {promise}
      */
     static async settings() {
 
+        // get current settings
         let settings = await AsyncStorage.getItem('settings')
 
+        // settings not set yet
         if (!settings)
             AsyncStorage.setItem('settings', JSON.stringify({
+
+                /**
+                 * Work hour by day - default 8 hours
+                 * 
+                 * @type {number}
+                 */
                 workHour: 8,
+
+                /**
+                 * Lunch interval - default 1 hour
+                 * 
+                 * @type {number}
+                 */
                 lunchInterval: 1,
+
+                /**
+                 * Salary - default 900
+                 */
                 salary: 900
+
             }))
 
         return await AsyncStorage.getItem('settings')
 
     }
 
+    /**
+     * Reset settings to default
+     * 
+     * @return {void}
+     */
     static async clearSettings() {
         AsyncStorage.setItem('settings', JSON.stringify({
             workHour: 8,
-            lunchInterval: 1
+            lunchInterval: 1,
+            salary: 900
         }))
     }
 
+    /**
+     * Updates work hour settings
+     * 
+     * @param {number} hour 
+     * 
+     * @return {void}
+     */
     static async updateWorkHour(hour) {
 
-        let toSave = {
+        // change object to be saved
+        let change = {
             workHour: hour
         }
 
         // save to app storage
-        await AsyncStorage.mergeItem('settings', JSON.stringify(toSave))
-
-    }
-
-    static async updateLunchInterval(interval) {
-
-        let toSave = {
-            lunchInterval: interval
-        }
-
-        // save to app storage
-        await AsyncStorage.mergeItem('settings', JSON.stringify(toSave))
-
-    }
-
-    static async updateSalary(salary) {
-
-        let toSave = {
-            salary: salary
-        }
-
-        // save to app storage
-        await AsyncStorage.mergeItem('settings', JSON.stringify(toSave))
+        await AsyncStorage.mergeItem('settings', JSON.stringify(change))
 
     }
 
     /**
-     * Take app full history
+     * Updates lunch interval settings
      * 
-     * @return {array}
+     * @param {number} interval 
+     * 
+     * @return {void}
+     */
+    static async updateLunchInterval(interval) {
+
+        // change object to be saved
+        let change = {
+            lunchInterval: interval
+        }
+
+        // save to app storage
+        await AsyncStorage.mergeItem('settings', JSON.stringify(change))
+
+    }
+
+    /**
+     * Updates work salary
+     * 
+     * @param {number} salary
+     * 
+     * @return {void} 
+     */
+    static async updateSalary(salary) {
+
+        // change object to be saved
+        let change = {
+            salary: salary
+        }
+
+        // save to app storage
+        await AsyncStorage.mergeItem('settings', JSON.stringify(change))
+
+    }
+
+
+    // ********************
+    // ***** APP DATA ***** 
+    // ********************
+
+    /**
+     * Get all app history
+     * 
+     * @return {promise}
      */
     static async allHistory() {
 
+        // get app history
         let history = await AsyncStorage.getItem('history')
 
+        // history not set yet
         if (!history)
             AsyncStorage.setItem('history', JSON.stringify({}))
 
         return await AsyncStorage.getItem('history')
-
     }
 
+    /**
+     * Get years from app history [2018, 2019, ...etc]
+     * 
+     * @return {array}
+     */
     static async getYears() {
 
+        // get all history
         let allHistory = await AppStorage.allHistory()
 
+        // years
         let years = Object.keys(JSON.parse(allHistory))
 
+        // current year
         let currentYear = new Date().getFullYear()
 
+        // saved years has current year
         let hasCurrentYear = years.includes(currentYear + '')
 
+        // current year not saved yet
         if (!hasCurrentYear) years.push(currentYear)
 
+        // prepare return array
         let _return = []
 
+        // for each year found
         years.map((year) => {
             _return.push({
                 label: year + '',
@@ -135,16 +209,16 @@ export class AppStorage {
         let eventIndex = AppStorage._getEventIndex(event)
 
         // prepare an object to be saved
-        let toSave = {}
-        toSave[year] = {}
-        toSave[year][month] = {}
+        let change = {}
+        change[year] = {}
+        change[year][month] = {}
         // take already saved day events
-        toSave[year][month][day] = allHistory[year][month][day]
+        change[year][month][day] = allHistory[year][month][day]
         // add/update day event
-        toSave[year][month][day][eventIndex] = new Date(year, month, day, hour, minutes, seconds)
+        change[year][month][day][eventIndex] = new Date(year, month, day, hour, minutes, seconds)
 
         // save to app storage
-        AsyncStorage.mergeItem('history', JSON.stringify(toSave))
+        AsyncStorage.mergeItem('history', JSON.stringify(change))
 
     }
 
@@ -179,14 +253,14 @@ export class AppStorage {
      */
     static async delete(year, month = null, day = null, event = null) {
 
-        // deletes a year
+        // deletes registries by year
         if (year && (!month && !day && !event)) {
             toDelete = {}
             toDelete[year] = null
             AsyncStorage.mergeItem('history', JSON.stringify(toDelete))
         }
 
-        // deletes a month
+        // deletes registries by month
         if (year && (month && !day && !event)) {
             toDelete = {}
             toDelete[year] = {}
@@ -194,7 +268,7 @@ export class AppStorage {
             AsyncStorage.mergeItem('history', JSON.stringify(toDelete))
         }
 
-        // deletes a day
+        // deletes registries by day
         if (year && (month && day && !event)) {
             toDelete = {}
             toDelete[year] = {}

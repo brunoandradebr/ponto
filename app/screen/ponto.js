@@ -1,18 +1,12 @@
 import React, { Component } from 'react'
 
-import { StyleSheet, Text, View, TouchableOpacity, Vibration } from 'react-native'
-
-// utils functions
-import { getDayBalance } from '../utils/utils'
-
-// app storage
-import { AppStorage } from '../storage/AppStorage'
-
-// app locale
-import AppLocale from '../AppLocale'
-
-// registry component
-import Registry from '../component/ponto/registry'
+import {
+    StyleSheet,
+    View,
+    Text,
+    TouchableOpacity,
+    Vibration
+} from 'react-native'
 
 // moment
 import 'moment/locale/pt-br'
@@ -21,22 +15,84 @@ import moment from 'moment'
 // app colors
 import Color from '../color.json'
 
+// utils functions
+import { getDayBalance } from '../utils/utils'
+
+// app locale
+import AppLocale from '../AppLocale'
+
+// app storage
+import { AppStorage } from '../storage/AppStorage'
+
+// registry component
+import Registry from '../component/ponto/registry'
+
 export default class Ponto extends Component {
 
     constructor(props) {
         super(props)
 
         this.state = {
+
+            /**
+             * locale object to translate
+             * 
+             * @type {object}
+             */
             locale: null,
-            currentEvent: null,
-            entrance: null,
-            entranceLunch: null,
-            leaveLunch: null,
-            leave: null,
+
+            /**
+             * Current date time - clock display
+             * 
+             * @type {date}
+             */
             currentTime: new Date(),
-            leaveTime: null
+
+            /**
+             * Date time indicating leave time based on entrance date time
+             * 
+             * @type {string}
+             */
+            leaveTime: null,
+
+            /**
+             * Current registry event - entrance|entranceLunch|leaveLunch|leave
+             * 
+             * @type {string}
+             */
+            currentEvent: null,
+
+            /**
+             * Entrance date time
+             * 
+             * @type {date}
+             */
+            entrance: null,
+
+            /**
+             * Entrance lunch date time
+             * 
+             * @type {date}
+             */
+            entranceLunch: null,
+
+            /**
+             * Leave lunch date time
+             * 
+             * @type {date}
+             */
+            leaveLunch: null,
+
+            /**
+             * Leave date time
+             * 
+             * @type {date}
+             */
+            leave: null
+
         }
 
+        // updates clock current time each second
         setInterval(() => {
             this.setState({
                 currentTime: new Date()
@@ -47,11 +103,10 @@ export default class Ponto extends Component {
 
     componentDidMount() {
 
-        //AppStorage.clear()
-
-        // ever enter this component
+        // ever enter this component - screen
         this.onEnterEvent = this.props.navigation.addListener('didFocus', async () => {
 
+            // get app settings
             let settings = JSON.parse(await AppStorage.settings())
 
             // get today events
@@ -90,7 +145,7 @@ export default class Ponto extends Component {
 
     async getLeaveTime(entrance, entranceLunch, leaveLunch) {
 
-        let settings = JSON.parse(await AppStorage.settings())
+        let settings = await AppStorage.settings()
 
         let leaveTime = 0
 
